@@ -34,12 +34,12 @@ public class UserController {
 			return "redirect:/users/loginForm";
 		}
 		
-		if(!password.equals(user.getPassword())) {
+		if(!user.matchPassword(password)) {
 			System.out.println("Login Failure! - password");
 			return "redirect:/users/loginForm";
 		}
 		System.out.println("Login Success!");
-		session.setAttribute("sessionedUser", user);
+		session.setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
 		
 		return "redirect:/";
 	}
@@ -47,7 +47,7 @@ public class UserController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		System.out.println("Logout Success!");
-		session.removeAttribute("sessionedUser");
+		session.removeAttribute(HttpSessionUtils.USER_SESSION_KEY);
 		return "redirect:/";
 	}
 	
@@ -71,16 +71,13 @@ public class UserController {
 	
 	@GetMapping("/{id}/form")
 	public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
-		Object tempUser = session.getAttribute("sessionedUser");
-		if(tempUser == null) {
+		if(!HttpSessionUtils.isLoginUser(session)) {
 			return "redirect:/users/loginForm";
 		}
 		
-		User sessionedUser = (User)tempUser;
-		System.out.println(id);
-		System.out.println(sessionedUser.getId());
-		if(!id.equals(sessionedUser.getId())){
-			throw new IllegalStateException("error");
+		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
+		if(!sessionedUser.matchId(id)) {
+			throw new IllegalStateException("You can`t update the another user");
 		}
 		
 		User user = userRepository.findById(sessionedUser.getId()).get();
@@ -88,28 +85,17 @@ public class UserController {
 		return "/user/updateForm";
 	}
 	
-	/*@PostMapping("/{id}")
-	public String update(@PathVariable Long id, User updateUser) {
-		System.out.println("updateValue : " + updateUser);
-		User user = userRepository.findById(id).get();
-		user.update(updateUser);
-		userRepository.save(user);
-		return "redirect:/users";
-	}*/
-	
 	@PutMapping("/{id}")
 	public String update(@PathVariable Long id, User updateUser, HttpSession session) {
-		Object tempUser = session.getAttribute("sessionedUser");
-		if(tempUser == null) {
+		if(!HttpSessionUtils.isLoginUser(session)) {
 			return "redirect:/users/loginForm";
 		}
 		
-		User sessionedUser = (User)tempUser;
-		if(!id.equals(sessionedUser.getId())){
-			throw new IllegalStateException("자신의 정보만 수정할 수 있습니다.");
+		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
+		if(!sessionedUser.matchId(id)) {
+			throw new IllegalStateException("You can`t update the another user");
 		}
 		
-		System.out.println("updateValue : " + updateUser);
 		User user = userRepository.findById(id).get();
 		user.update(updateUser);
 		userRepository.save(user);

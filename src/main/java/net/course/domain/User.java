@@ -18,14 +18,21 @@ public class User {
 	private String name;
 	private String email;
 	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getPassword() {
+		return password;
+	}
 	public String getUserId() {
 		return userId;
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
-	}
-	public String getPassword() {
-		return password;
 	}
 	public void setPassword(String password) {
 		this.password = password;
@@ -52,9 +59,16 @@ public class User {
 		this.email = updateUser.email;
 		
 	}
-	public Long getId() {
-		return id;
+	public boolean matchPassword(String newPassword) {
+		if(newPassword == null) {
+			return false;
+		}
+		return newPassword.equals(password);
 	}
-	
-	
+	public boolean matchId(Long newId) {
+		if(newId == null) {
+			return false;
+		}
+		return newId.equals(id);
+	}
 }
