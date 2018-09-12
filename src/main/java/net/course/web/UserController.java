@@ -44,6 +44,13 @@ public class UserController {
 		return "redirect:/";
 	}
 	
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		System.out.println("Logout Success!");
+		session.removeAttribute("user");
+		return "redirect:/";
+	}
+	
 	@PostMapping("")
 	public String create(User user) {
 		System.out.println("inputValue : " + user);
