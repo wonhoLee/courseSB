@@ -1,5 +1,7 @@
 package net.course.web;
 
+import java.time.LocalDateTime;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class QuestionController {
 			return "/users/loginForm";
 		}
 		User sessionUser = HttpSessionUtils.getUserFromSession(session);
-		Question newQuestion = new Question(sessionUser.getUserId(), title, contents);
+		Question newQuestion = new Question(sessionUser, title, contents);
 		questioinRepository.save(newQuestion);
 		
 		return "redirect:/";
