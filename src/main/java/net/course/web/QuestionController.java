@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import net.course.domain.AnswerRepository;
 import net.course.domain.Question;
 import net.course.domain.QuestionRepository;
 import net.course.domain.User;
@@ -21,6 +22,8 @@ import net.course.domain.User;
 public class QuestionController {
 	@Autowired
 	private QuestionRepository questioinRepository;
+	@Autowired
+	private AnswerRepository answerRepository;
 	
 	@GetMapping("/form")
 	public String form(HttpSession session) {
@@ -39,7 +42,7 @@ public class QuestionController {
 		User sessionUser = HttpSessionUtils.getUserFromSession(session);
 		Question newQuestion = new Question(sessionUser, title, contents);
 		questioinRepository.save(newQuestion);
-		
+
 		return "redirect:/";
 	}
 	

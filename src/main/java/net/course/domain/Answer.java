@@ -2,7 +2,6 @@ package net.course.domain;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -11,52 +10,50 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 
 @Entity
-public class Question {
+public class Answer {
 	@Id
 	@GeneratedValue
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
+	@JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_writer"))
 	private User writer;
-	private String title;
+	
+	@ManyToOne
+	@JoinColumn(foreignKey = @ForeignKey(name = "fk_answer_question"))
+	private Question question;
 	
 	@Lob
 	private String contents;
 	private LocalDateTime createDate;
 	
-	@OneToMany(mappedBy="question")
-	@OrderBy("id ASC")
-	private List<Answer> answers;
-	
-	public Question() {}
-	
-	public Question(User writer, String title, String contents) {
+	public Answer() {
+		
+	}
+
+	public Answer(User writer, Question question, String contents) {
 		super();
 		this.writer = writer;
-		this.title = title;
+		this.question = question;
 		this.contents = contents;
 		this.createDate = LocalDateTime.now();
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Answer [id=" + id + ", writer=" + writer + ", question=" + question + ", contents=" + contents
+				+ ", createDate=" + createDate + "]";
+	}
+
 	public String getFormattedCreateDate() {
 		if(createDate == null) {
 			return "";
 		}
 		return createDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
 	}
-
-	public void update(String title, String contents) {
-		this.title = title;
-		this.contents = contents;
-	}
-
-	public boolean isSameWriter(User loginUser) {
-		return this.writer.equals(loginUser);
-	}
-
+	
+	
+	
 }
