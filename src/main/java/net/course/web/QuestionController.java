@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import net.course.domain.AnswerRepository;
 import net.course.domain.Question;
 import net.course.domain.QuestionRepository;
 import net.course.domain.User;
@@ -22,22 +21,19 @@ import net.course.domain.User;
 public class QuestionController {
 	@Autowired
 	private QuestionRepository questioinRepository;
-	@Autowired
-	private AnswerRepository answerRepository;
 	
 	@GetMapping("/form")
 	public String form(HttpSession session) {
 		if(!HttpSessionUtils.isLoginUser(session)) {
-			return "/users/loginForm";
+			return "/user/login";
 		}
 		return "qna/form";
 	}
 	
 	@PostMapping("")
 	public String create(String title, String contents, HttpSession session) {
-		System.out.println("test");
 		if(!HttpSessionUtils.isLoginUser(session)) {
-			return "/users/loginForm";
+			return "/user/login";
 		}
 		User sessionUser = HttpSessionUtils.getUserFromSession(session);
 		Question newQuestion = new Question(sessionUser, title, contents);
@@ -54,47 +50,52 @@ public class QuestionController {
 	
 	@GetMapping("/{id}/form")
 	public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
-		if(!HttpSessionUtils.isLoginUser(session)) {
-			return "/users/loginForm";
+		try {
+			Question question = questioinRepository.findById(id).get();
+			hasPermission(session, question);
+			model.addAttribute("questions", question);
+			return "/qna/updateForm";
+		} catch (IllegalStateException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "/user/login";
 		}
-		User loginUser = HttpSessionUtils.getUserFromSession(session);
-		Question question = questioinRepository.findById(id).get();
-		if(!question.isSameWriter(loginUser)) {
-			return "/users/loginForm";
-		}
-		
-		model.addAttribute("questions", question);
-		return "/qna/updateForm";
 	}
 	
 	@PutMapping("/{id}")
-	public String update(@PathVariable Long id, String title, String contents, HttpSession session) {
-		if(!HttpSessionUtils.isLoginUser(session)) {
-			return "/users/loginForm";
+	public String update(@PathVariable Long id, String title, String contents, HttpSession session, Model model) {
+		try {
+			Question question = questioinRepository.findById(id).get();
+			hasPermission(session, question);
+			question.update(title, contents);
+			questioinRepository.save(question);
+			return String.format("redirect:/questions/%d", id);
+		} catch (IllegalStateException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "/user/login";
 		}
-		User loginUser = HttpSessionUtils.getUserFromSession(session);
-		Question question = questioinRepository.findById(id).get();
-		if(!question.isSameWriter(loginUser)) {
-			return "/users/loginForm";
-		}
-		
-		question.update(title, contents);
-		questioinRepository.save(question);
-		return String.format("redirect:/questions/%d", id);
 	}
 	
 	@DeleteMapping("/{id}")
-	public String delete(@PathVariable Long id, HttpSession session) {
+	public String delete(@PathVariable Long id, HttpSession session, Model model) {
+		try {
+			Question question = questioinRepository.findById(id).get();
+			hasPermission(session, question);
+			questioinRepository.deleteById(id);
+			return "redirect:/";
+		} catch (IllegalStateException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "/user/login";
+		}
+	}
+	
+	private boolean hasPermission(HttpSession session, Question question) {
 		if(!HttpSessionUtils.isLoginUser(session)) {
-			return "/users/loginForm";
+			throw new IllegalStateException("로그인이 필요합니다.");
 		}
 		User loginUser = HttpSessionUtils.getUserFromSession(session);
-		Question question = questioinRepository.findById(id).get();
 		if(!question.isSameWriter(loginUser)) {
-			return "redirect:/users/loginForm";
+			throw new IllegalStateException("자신이 쓴 글만 수정, 삭제가 가능합니다.");
 		}
-		
-		questioinRepository.deleteById(id);
-		return "redirect:/";
+		return true;
 	}
 }
