@@ -53,7 +53,7 @@ public class QuestionController {
 	public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
 		Question question = questioinRepository.findById(id).get();
 		Result result = valid(session, question);
-		if(!result.isValud()) {
+		if(!result.isValid()) {
 			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "/user/login";
 		}
@@ -66,7 +66,7 @@ public class QuestionController {
 	public String update(@PathVariable Long id, String title, String contents, HttpSession session, Model model) {
 		Question question = questioinRepository.findById(id).get();
 		Result result = valid(session, question);
-		if(!result.isValud()) {
+		if(!result.isValid()) {
 			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "/user/login";
 		}
@@ -80,7 +80,7 @@ public class QuestionController {
 	public String delete(@PathVariable Long id, HttpSession session, Model model) {
 		Question question = questioinRepository.findById(id).get();
 		Result result = valid(session, question);
-		if(!result.isValud()) {
+		if(!result.isValid()) {
 			model.addAttribute("errorMessage", result.getErrorMessage());
 			return "/user/login";
 		}

@@ -23,7 +23,7 @@ public class Result {
 		return new Result(false, errorMessage);
 	}
 	
-	public boolean isValud() {
+	public boolean isValid() {
 		return valid;
 	}
 	
