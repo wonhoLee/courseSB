@@ -1,4 +1,4 @@
-INSERT INTO USER (ID, USER_ID, PASSWORD, NAME, EMAIL) VALUES (0, 'test', '1234', '이름', 'test@naver.com');
-INSERT INTO USER (ID, USER_ID, PASSWORD, NAME, EMAIL) VALUES (-1, 'test1', '1234', '이름', 'test@naver.com');
+INSERT INTO USER (ID, USER_ID, PASSWORD, NAME, EMAIL, CREATE_DATE, MODIFIED_DATE) VALUES (0, 'test', '1234', '이름', 'test@naver.com', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+INSERT INTO USER (ID, USER_ID, PASSWORD, NAME, EMAIL, CREATE_DATE, MODIFIED_DATE) VALUES (-1, 'test1', '1234', '이름', 'test@naver.com', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
 
-INSERT INTO QUESTION(id, writer_id, title, contents, create_Date, count_Of_Answer) VALUES(0, 0, '국내에서 Ruby on Rails 사용하나요?', 'Ruby on Rails 사용량이', CURRENT_TIMESTAMP(), 0);
+INSERT INTO QUESTION(id, writer_id, title, contents, create_Date, count_Of_Answer, MODIFIED_DATE) VALUES(0, 0, '국내에서 Ruby on Rails 사용하나요?', 'Ruby on Rails 사용량이', CURRENT_TIMESTAMP(), 0, CURRENT_TIMESTAMP());
