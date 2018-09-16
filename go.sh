@@ -1,9 +1,11 @@
 cd courseSB
+echo "Welcome My Shell"
+TOMCAT_HOME=~/apache-tomcat-8.5.34
 git pull
-~/apache-tomcat-8.5.34/bin/shutdown.sh
+$TOMCAT_HOME/bin/shutdown.sh
 ./mvnw clean package
 cd target
-rm -rf ~/apache-tomcat-8.5.34/webapps/ROOT/
-mv courseSB-1.0/ ~/apache-tomcat-8.5.34/webapps/ROOT/
-~/apache-tomcat-8.5.34/bin/startup.sh
-tail -500f ~/apache-tomcat-8.5.34/logs/catalina.out
+rm -rf $TOMCAT_HOME/webapps/ROOT/
+mv courseSB-1.0/ $TOMCAT_HOME/webapps/ROOT/
+$TOMCAT_HOME/bin/startup.sh
+tail -500f $TOMCAT_HOME/logs/catalina.out
