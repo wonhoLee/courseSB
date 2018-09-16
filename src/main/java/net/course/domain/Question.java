@@ -35,6 +35,9 @@ public class Question {
 	@JsonProperty
 	private String contents;
 	
+	@JsonProperty
+	private Integer countOfAnswer = 0;
+	
 	private LocalDateTime createDate;
 	
 	@OneToMany(mappedBy="question")
@@ -67,4 +70,11 @@ public class Question {
 		return this.writer.equals(loginUser);
 	}
 
+	public void addAnswer() {
+		this.countOfAnswer++;
+	}
+
+	public void deleteAnswer() {
+		this.countOfAnswer--;
+	}
 }
